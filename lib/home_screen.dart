@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:posts_api_hit_expmple/model/post_data.dart';
@@ -22,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
             future: getPosts(),
             builder: (context, snap) {
               if (snap.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
+                return const Center(child: CircularProgressIndicator());
               } else if (snap.hasError) {
                 return Center(
                   child: Text("Error ${snap.error}"),
@@ -30,23 +29,49 @@ class _HomeScreenState extends State<HomeScreen> {
               } else if (snap.hasData) {
                 return snap.data != null
                     ? ListView.builder(
-                    itemCount: snap.data!.posts!.length,
-                    itemBuilder: (context, index) {
-                      PostModel eachPost = snap.data!.posts![index];
-                      return Card(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(eachPost.title!,
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold)),
-                            SizedBox(height: 10),
-                            Text(eachPost.body!),
-                          ],
-                        ),
-                      );
-                    })
+                        itemCount: snap.data!.posts!.length,
+                        itemBuilder: (context, index) {
+                          PostModel eachPost = snap.data!.posts![index];
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Card(
+                              elevation: 7,
+                              shadowColor: Colors.deepOrange,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(eachPost.title,
+                                        style: const TextStyle(
+                                            fontSize: 18, color: Colors.lightBlue,
+                                            fontWeight: FontWeight.bold)),
+                                    const SizedBox(height: 10),
+                                    Text(eachPost.body),
+                                    /// tags show
+                                    const SizedBox(height: 5,),
+                                    Text(eachPost.tagsModel.tags.join(', '),style: const TextStyle(fontSize: 11 , color: Colors.black54),) ,
+                                    const SizedBox(height: 10,),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        const Icon(Icons.remove_red_eye, size: 30, color: Colors.deepOrangeAccent,),
+                                    /// view
+                                        Text(eachPost.views.toString()),
+                                        const Icon(Icons.thumb_up_alt_outlined , size: 30, color: Colors.lightBlue,) ,
+                                        Text(eachPost.reactions.likes.toString()) ,
+                                        const Icon(Icons.thumb_down_alt_outlined, size: 30,color: Colors.lightBlue,) ,
+                                        Text(eachPost.reactions.dislikes.toString()) ,
+
+                                      ],
+                                    )
+
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        })
                     : Container();
               }
               return Container();
